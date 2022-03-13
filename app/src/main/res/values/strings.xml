@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">InventeryApp</string>
+    <string name="empty_view_title_text">No Data to Show</string>
+    <string name="empty_view_subtitle_text">First try to add some</string>
+</resources>

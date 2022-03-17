@@ -2,4 +2,7 @@
     <string name="app_name">InventeryApp</string>
     <string name="empty_view_title_text">No Data to Show</string>
     <string name="empty_view_subtitle_text">First try to add some</string>
+    <string name="action_insert_dummy_data">Insert Dummy Data</string>
+    <string name="action_delete_all_entries">Delete All</string>
+    <string name="action_contact_dealer">Contact Dealer</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -11,6 +12,7 @@ import android.service.controls.actions.FloatAction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.inventeryapp.data.DBContract.DBEntry;
@@ -45,6 +47,70 @@ public class MainActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
         mDbHandler = new DBHandler(this);
+
+        displayDatabaseInfo();
+
+    }
+
+    /**
+     * Temporary helper method to display information in the onscreen TextView about the state of
+     * the pets database.
+     */
+    private void displayDatabaseInfo() {
+        // Create and/or open a database to read from it
+        SQLiteDatabase db = mDbHandler.getReadableDatabase();
+
+        String[] projection = {
+                DBEntry._ID,
+        DBEntry.COLUMN_ITEM_NAME,
+        DBEntry.COLUMN_ITEM_QUANTITY,
+        DBEntry.COLUMN_ITEM_PRICE};
+
+
+        // Perform a query on the pets table
+        Cursor cursor = db.query(
+                DBEntry.TABLE_NAME,   // The table to query
+                projection,            // The columns to return
+                null,                  // The columns for the WHERE clause
+                null,                  // The values for the WHERE clause
+                null,                  // Don't group the rows
+                null,                  // Don't filter by row groups
+                null);                   // The sort order
+
+        TextView displayView = (TextView) findViewById(R.id.text_view_item);
+
+        try {
+            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
+            displayView.append(DBEntry._ID + " - " +
+                    DBEntry.COLUMN_ITEM_NAME+ " - " +
+                    DBEntry.COLUMN_ITEM_QUANTITY + " - " +
+                    DBEntry.COLUMN_ITEM_PRICE + "\n");
+
+            // Figure out the index of each column
+            int idColumnIndex = cursor.getColumnIndex(DBEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_NAME);
+            int quantityColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_QUANTITY);
+            int priceColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_PRICE);
+
+            // Iterate through all the returned rows in the cursor
+            while (cursor.moveToNext()) {
+                // Use that index to extract the String or Int value of the word
+                // at the current row the cursor is on.
+                int currentID = cursor.getInt(idColumnIndex);
+                String currentName = cursor.getString(nameColumnIndex);
+                String currentQuantity = cursor.getString(quantityColumnIndex);
+                int currentPrice = cursor.getInt(priceColumnIndex);
+                // Display the values from each column of the current row in the cursor in the TextView
+                displayView.append(("\n" + currentID + " - " +
+                        currentName + " - " +
+                        currentQuantity + " - " +
+                        currentPrice));
+            }
+        } finally {
+            // Always close the cursor when you're done reading from it. This releases all its
+            // resources and makes it invalid.
+            cursor.close();
+        }
 
     }
 

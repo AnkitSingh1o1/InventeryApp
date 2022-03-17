@@ -67,35 +67,4 @@ public class DBHandler extends SQLiteOpenHelper {
         return idx;
     }
 
-    public void queryItems (){
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-                BaseColumns._ID,
-                DBEntry.COLUMN_ITEM_NAME,
-                DBEntry.COLUMN_ITEM_QUANTITY,
-                DBEntry.COLUMN_ITEM_PRICE
-        };
-
-        // Filter results WHERE "title" = 'My Title'
-        // String selection = DBEntry.COLUMN_ITEM_NAME + " = ?";
-        // String[] selectionArgs = { "My Title" };
-
-        // How you want the results sorted in the resulting Cursor
-        // String sortOrder =
-        // FeedEntry.COLUMN_NAME_SUBTITLE + " DESC";
-
-        Cursor cursor = db.query(
-                DBEntry.TABLE_NAME,   // The table to query
-                null,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                null               // The sort order
-        );
-    }
 }

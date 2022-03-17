@@ -42,10 +42,16 @@ public class EditorActivity extends AppCompatActivity {
                 int price = Integer.parseInt(itemPrice.getText().toString());
 
                 //Calling a self-declared method to add data to our database
-                dbHandler.addNewItem(name, quantity, price);
+                long index = dbHandler.addNewItem(name, quantity, price);
 
-                //Displaying a Confirmation Toast Message
-                Toast.makeText(EditorActivity.this, "Course has been added.", Toast.LENGTH_SHORT).show();
+                if(index != -1) {
+                    //Displaying a Confirmation Toast Message
+                    Toast.makeText(EditorActivity.this, "Added Successfully.",
+                            Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(EditorActivity.this, "Adding Unsuccessful.",
+                            Toast.LENGTH_SHORT).show();
+                }
                 itemName.setText("");
                 itemQuantity.setText("");
                 itemPrice.setText("");

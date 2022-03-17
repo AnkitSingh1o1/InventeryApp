@@ -5,4 +5,6 @@
     <string name="action_insert_dummy_data">Insert Dummy Data</string>
     <string name="action_delete_all_entries">Delete All</string>
     <string name="action_contact_dealer">Contact Dealer</string>
+    <string name="editor_insert_pet_failed">Error with Saving</string>
+    <string name="editor_insert_pet_successful">Saved</string>
 </resources>

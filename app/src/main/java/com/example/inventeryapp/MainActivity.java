@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.service.controls.actions.FloatAction;
@@ -67,20 +68,13 @@ public class MainActivity extends AppCompatActivity {
         DBEntry.COLUMN_ITEM_PRICE};
 
 
-        // Perform a query on the pets table
-        Cursor cursor = db.query(
-                DBEntry.TABLE_NAME,   // The table to query
-                projection,            // The columns to return
-                null,                  // The columns for the WHERE clause
-                null,                  // The values for the WHERE clause
-                null,                  // Don't group the rows
-                null,                  // Don't filter by row groups
-                null);                   // The sort order
+       Cursor cursor = getContentResolver().query(DBEntry.CONTENT_URI, projection, null,
+               null, null);
 
         TextView displayView = (TextView) findViewById(R.id.text_view_item);
 
         try {
-            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
+            displayView.setText("The Inventory table contains " + cursor.getCount() + " items.\n\n");
             displayView.append(DBEntry._ID + " - " +
                     DBEntry.COLUMN_ITEM_NAME+ " - " +
                     DBEntry.COLUMN_ITEM_QUANTITY + " - " +
@@ -141,22 +135,15 @@ public class MainActivity extends AppCompatActivity {
 //----------------------------------------</MENU>-----------------------------------------------------
 
     private void insertDummyItem(){
-        SQLiteDatabase db = mDbHandler.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(DBEntry.COLUMN_ITEM_NAME, "DUMMY");
         values.put(DBEntry.COLUMN_ITEM_QUANTITY, 1);
         values.put(DBEntry.COLUMN_ITEM_PRICE, 1);
 
-        long newRowId = db.insert(DBEntry.TABLE_NAME, null, values);
-
-        if(newRowId != -1) {
-            //Displaying a Confirmation Toast Message
-            Toast.makeText(MainActivity.this, "Added Successfully.",
-                    Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(MainActivity.this, "Adding Unsuccessful.",
-                    Toast.LENGTH_SHORT).show();
-        }
+        // Insert a new row for Toto into the provider using the ContentResolver.
+        // Use the {@link PetEntry#CONTENT_URI} to indicate that we want to insert
+        // into the pets database table.
+        // Receive the new content URI that will allow us to access Toto's data in the future.
+        Uri newUri = getContentResolver().insert(DBEntry.CONTENT_URI, values);
     }
 }

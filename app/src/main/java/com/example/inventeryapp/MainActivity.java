@@ -1,28 +1,28 @@
 package com.example.inventeryapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.service.controls.actions.FloatAction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.content.CursorLoader;
 
 import com.example.inventeryapp.data.DBContract.DBEntry;
 import com.example.inventeryapp.data.DBHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int INVENTORY_LOADER = 0;
+    InventoryCursorAdapter mCursorAdapter;
 
     /** Database helper that will provide us access to the database */
     private DBHandler mDbHandler;
@@ -47,45 +47,21 @@ public class MainActivity extends AppCompatActivity {
       });
 
         // Find the ListView which will be populated with the pet data
-        ListView petListView = (ListView) findViewById(R.id.list);
+        ListView inventoryListView = (ListView) findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
-        petListView.setEmptyView(emptyView);
+        inventoryListView.setEmptyView(emptyView);
 
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mDbHandler = new DBHandler(this);
+        //Setup an adapter to create a list item for each row of data in the cursor
+        //there is no pet data yet so pass in null for the cursor
+        mCursorAdapter  = new InventoryCursorAdapter(this, null);
+        inventoryListView.setAdapter(mCursorAdapter);
 
-        displayDatabaseInfo();
-
-    }
-
-    /**
-     * Temporary helper method to display information in the onscreen TextView about the state of
-     * the pets database.
-     */
-    private void displayDatabaseInfo() {
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHandler.getReadableDatabase();
-
-        String[] projection = {
-                DBEntry._ID,
-                DBEntry.COLUMN_ITEM_NAME,
-                DBEntry.COLUMN_ITEM_QUANTITY,
-                DBEntry.COLUMN_ITEM_PRICE};
+        //Kick off the loader
+        getLoaderManager().initLoader(INVENTORY_LOADER, null, this);
 
 
-        Cursor cursor = getContentResolver().query(DBEntry.CONTENT_URI, projection, null,
-                null, null);
-
-        // Find the ListView which will be populated with the pet data
-        ListView petListView = (ListView) findViewById(R.id.list);
-
-        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
-        InventoryCursorAdapter adapter = new InventoryCursorAdapter(this, cursor);
-        // Attach the adapter to the ListView.
-        petListView.setAdapter(adapter);
     }
 
 //------------------------------------------<MENU>----------------------------------------------------
@@ -125,5 +101,33 @@ public class MainActivity extends AppCompatActivity {
         // into the pets database table.
         // Receive the new content URI that will allow us to access Toto's data in the future.
         Uri newUri = getContentResolver().insert(DBEntry.CONTENT_URI, values);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                DBEntry._ID,
+                DBEntry.COLUMN_ITEM_NAME,
+                DBEntry.COLUMN_ITEM_QUANTITY,
+                DBEntry.COLUMN_ITEM_PRICE
+        };
+        return new CursorLoader(this,
+                DBEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished( Loader<Cursor> loader, Cursor data) {
+        //update with this new cursor containing updated pet data
+        mCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset( Loader<Cursor> loader) {
+        //Callbacks called when the data needs to be deleted
+        mCursorAdapter.swapCursor(null);
     }
 }

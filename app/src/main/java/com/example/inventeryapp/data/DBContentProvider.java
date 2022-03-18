@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.inventeryapp.data.DBContract.DBEntry;
 
 
 public class DBContentProvider extends ContentProvider {
@@ -19,7 +20,6 @@ public class DBContentProvider extends ContentProvider {
     public static final String LOG_TAG = DBContentProvider.class.getSimpleName();
 
 //------------------------------------------<URI Matcher>-------------------------------------------
-
     private static final int INVENTORY = 100;
     private static final int INVENTORY_ID = 101;
 
@@ -28,7 +28,6 @@ public class DBContentProvider extends ContentProvider {
         sURIMatcher.addURI(DBContract.CONTENT_AUTHORITY, DBContract.PATH_INVENTORY, INVENTORY);
         sURIMatcher.addURI(DBContract.CONTENT_AUTHORITY, DBContract.PATH_INVENTORY+"/#", INVENTORY_ID);
     }
-
 //----------------------------------------</URI Matcher>--------------------------------------------
 
     private DBHandler mDBHandler;
@@ -81,11 +80,6 @@ public class DBContentProvider extends ContentProvider {
         return cursor;
     }
 //--------------------------------------------</QUERY>----------------------------------------------
-    @Nullable
-    @Override
-    public String getType(@NonNull Uri uri) {
-        return null;
-    }
 
 //-------------------------------------------<INSERT>-----------------------------------------------
     @Override
@@ -118,13 +112,92 @@ public class DBContentProvider extends ContentProvider {
     }
 //------------------------------------------</INSERT>-----------------------------------------------
 
+
+//----------------------------------------<UPDATE>--------------------------------------------------
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection,
+                      String[] selectionArgs) {
+        final int match = sURIMatcher.match(uri);
+        switch (match) {
+            case INVENTORY:
+                return updatePet(uri, contentValues, selection, selectionArgs);
+            case INVENTORY_ID:
+                // For the PET_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = DBEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return updatePet(uri, contentValues, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
     }
+    private int updatePet(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // check that the name value is not null.
+        if (values.containsKey(DBEntry.COLUMN_ITEM_NAME)) {
+            String name = values.getAsString(DBEntry.COLUMN_ITEM_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Item requires a name");
+            }
+        }
+        // check that the quantity value is valid.
+        if (values.containsKey(DBEntry.COLUMN_ITEM_QUANTITY)) {
+            Integer quantity = values.getAsInteger(DBEntry.COLUMN_ITEM_QUANTITY);
+            if (quantity == null) {
+                throw new IllegalArgumentException("Item requires valid quantity");
+            }
+        }
+        // check that the price value is valid.
+        if (values.containsKey(DBEntry.COLUMN_ITEM_PRICE)) {
+            // Check that the weight is greater than or equal to 0 kg
+            Integer price = values.getAsInteger(DBEntry.COLUMN_ITEM_PRICE);
+            if (price != null && price < 0) {
+                throw new IllegalArgumentException("Item requires valid price");
+            }
+        }
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        } // Otherwise, get writeable database to update the data
+        SQLiteDatabase database = mDBHandler.getWritableDatabase();
+
+        // Returns the number of database rows affected by the update statement
+        return database.update(DBEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+//-------------------------------------</UPDATE>----------------------------------------------------
+
+//-------------------------------------<DELETE>-----------------------------------------------------
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        // Get writeable database
+        SQLiteDatabase database = mDBHandler.getWritableDatabase();
+
+        final int match = sURIMatcher.match(uri);
+        switch (match) {
+            case INVENTORY:
+                // Delete all rows that match the selection and selection args
+                return database.delete(DBEntry.TABLE_NAME, selection, selectionArgs);
+            case INVENTORY_ID:
+                // Delete a single row given by the ID in the URI
+                selection = DBEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return database.delete(DBEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
+    }
+//-----------------------------------------</DELETE>------------------------------------------------
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public String getType(Uri uri) {
+        final int match = sURIMatcher.match(uri);
+        switch (match) {
+            case INVENTORY:
+                return DBContract.CONTENT_LIST_TYPE;
+            case INVENTORY_ID:
+                return DBContract.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+        }
     }
 }

@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.inventeryapp.data.DBContract.DBEntry;
@@ -45,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
           }
       });
 
+        // Find the ListView which will be populated with the pet data
+        ListView petListView = (ListView) findViewById(R.id.list);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
+
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
         mDbHandler = new DBHandler(this);
@@ -63,49 +71,21 @@ public class MainActivity extends AppCompatActivity {
 
         String[] projection = {
                 DBEntry._ID,
-        DBEntry.COLUMN_ITEM_NAME,
-        DBEntry.COLUMN_ITEM_QUANTITY,
-        DBEntry.COLUMN_ITEM_PRICE};
+                DBEntry.COLUMN_ITEM_NAME,
+                DBEntry.COLUMN_ITEM_QUANTITY,
+                DBEntry.COLUMN_ITEM_PRICE};
 
 
-       Cursor cursor = getContentResolver().query(DBEntry.CONTENT_URI, projection, null,
-               null, null);
+        Cursor cursor = getContentResolver().query(DBEntry.CONTENT_URI, projection, null,
+                null, null);
 
-        TextView displayView = (TextView) findViewById(R.id.text_view_item);
+        // Find the ListView which will be populated with the pet data
+        ListView petListView = (ListView) findViewById(R.id.list);
 
-        try {
-            displayView.setText("The Inventory table contains " + cursor.getCount() + " items.\n\n");
-            displayView.append(DBEntry._ID + " - " +
-                    DBEntry.COLUMN_ITEM_NAME+ " - " +
-                    DBEntry.COLUMN_ITEM_QUANTITY + " - " +
-                    DBEntry.COLUMN_ITEM_PRICE + "\n");
-
-            // Figure out the index of each column
-            int idColumnIndex = cursor.getColumnIndex(DBEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_QUANTITY);
-            int priceColumnIndex = cursor.getColumnIndex(DBEntry.COLUMN_ITEM_PRICE);
-
-            // Iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentQuantity = cursor.getString(quantityColumnIndex);
-                int currentPrice = cursor.getInt(priceColumnIndex);
-                // Display the values from each column of the current row in the cursor in the TextView
-                displayView.append(("\n" + currentID + " - " +
-                        currentName + " - " +
-                        currentQuantity + " - " +
-                        currentPrice));
-            }
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
-
+        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
+        InventoryCursorAdapter adapter = new InventoryCursorAdapter(this, cursor);
+        // Attach the adapter to the ListView.
+        petListView.setAdapter(adapter);
     }
 
 //------------------------------------------<MENU>----------------------------------------------------

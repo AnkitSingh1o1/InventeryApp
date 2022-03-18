@@ -43,28 +43,4 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
-
-    public long addNewItem(String itemName, int itemQuantity,
-                           int itemPrice){
-        //Creating a var of our SQLite database and calling writable
-        //method so we can write with it in our database
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        //Creating a var for content values
-        ContentValues values = new ContentValues();
-
-        //Passing all values along with its key
-        values.put(DBEntry.COLUMN_ITEM_NAME, itemName);
-        values.put(DBEntry.COLUMN_ITEM_QUANTITY, itemQuantity);
-        values.put(DBEntry.COLUMN_ITEM_PRICE, itemPrice);
-
-        //After adding all values we are passing content values
-        //to our table
-        long idx = db.insert(DBEntry.TABLE_NAME, null, values);
-
-        db.close();
-
-        return idx;
-    }
-
 }

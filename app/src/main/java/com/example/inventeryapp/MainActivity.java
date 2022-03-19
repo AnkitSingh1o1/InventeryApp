@@ -1,5 +1,6 @@
 package com.example.inventeryapp;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +59,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //there is no pet data yet so pass in null for the cursor
         mCursorAdapter  = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
+
+        //Setup item click listener
+        inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                Uri currentPetUri = ContentUris.withAppendedId(DBEntry.CONTENT_URI, id);
+                intent.setData(currentPetUri);
+                startActivity(intent);
+            }
+        });
 
         //Kick off the loader
         getLoaderManager().initLoader(INVENTORY_LOADER, null, this);

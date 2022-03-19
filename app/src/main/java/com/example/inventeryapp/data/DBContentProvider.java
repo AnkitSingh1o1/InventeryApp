@@ -9,9 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.example.inventeryapp.data.DBContract.DBEntry;
 
 
@@ -54,7 +51,7 @@ public class DBContentProvider extends ContentProvider {
                 // For the PETS code, query the pets table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
                 // could contain multiple rows of the pets table.
-                cursor = database.query(DBContract.DBEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(DBEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case INVENTORY_ID:
@@ -66,12 +63,12 @@ public class DBContentProvider extends ContentProvider {
                 // For every "?" in the selection, we need to have an element in the selection
                 // arguments that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
-                selection = DBContract.DBEntry._ID + "=?";
+                selection = DBEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
                 // This will perform a query on the pets table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
-                cursor = database.query(DBContract.DBEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(DBEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             default:
@@ -101,10 +98,27 @@ public class DBContentProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertPet(Uri uri, ContentValues values) {
+        // Check that the name is not null
+        String name = values.getAsString(DBEntry.COLUMN_ITEM_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+        // If the weight is provided, check that it's greater than or equal to 0 kg
+        Integer quantity = values.getAsInteger(DBEntry.COLUMN_ITEM_QUANTITY);
+        if (quantity != null && quantity < 0) {
+            throw new IllegalArgumentException("Pet requires valid weight");
+        }
+        // If the weight is provided, check that it's greater than or equal to 0 kg
+        Integer price = values.getAsInteger(DBEntry.COLUMN_ITEM_PRICE);
+        if (price != null && price < 0) {
+            throw new IllegalArgumentException("Pet requires valid weight");
+        }
+
+
         // Get writeable database
         SQLiteDatabase database = mDBHandler.getWritableDatabase();
         // Insert the new pet with the given values
-        long id = database.insert(DBContract.DBEntry.TABLE_NAME, null, values);
+        long id = database.insert(DBEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
@@ -165,6 +179,7 @@ public class DBContentProvider extends ContentProvider {
         if (values.size() == 0) {
             return 0;
         } // Otherwise, get writeable database to update the data
+
         SQLiteDatabase database = mDBHandler.getWritableDatabase();
 
         // Perform the update on the database and get the number of rows affected
@@ -219,9 +234,9 @@ public class DBContentProvider extends ContentProvider {
         final int match = sURIMatcher.match(uri);
         switch (match) {
             case INVENTORY:
-                return DBContract.CONTENT_LIST_TYPE;
+                return DBEntry.CONTENT_LIST_TYPE;
             case INVENTORY_ID:
-                return DBContract.CONTENT_ITEM_TYPE;
+                return DBEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }

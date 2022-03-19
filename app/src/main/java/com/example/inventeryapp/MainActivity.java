@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-//------------------------------------------<MENU>----------------------------------------------------
+//------------------------------------------<MENU>--------------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_catalog.xml file.
@@ -97,11 +98,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 //Delete all pets
+                deleteAllPets();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-//----------------------------------------</MENU>-----------------------------------------------------
+    /**
+     * Helper method to delete all pets in the database.
+     */
+    private void deleteAllPets() {
+        int rowsDeleted = getContentResolver().delete(DBEntry.CONTENT_URI, null, null);
+        Log.v("MainActivity", rowsDeleted + " rows deleted from Inventory database");
+    }
+//----------------------------------------</MENU>---------------------------------------------------
 
     private void insertDummyItem(){
         ContentValues values = new ContentValues();

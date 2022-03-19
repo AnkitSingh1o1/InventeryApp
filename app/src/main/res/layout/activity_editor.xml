@@ -7,71 +7,71 @@
     android:orientation="vertical"
     tools:context=".EditorActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="Name" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Name" />
-
-            <EditText
-                android:id="@+id/itemNameEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/hint_name"
-                android:inputType="textCapWords" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/itemNameEdit"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/hint_name"
+            android:inputType="textCapWords" />
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Quantity" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/itemQuantityEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/hint_quantity"
-                android:text="1"
-                android:inputType="number"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="Quantity" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Price" />
+        <EditText
+            android:id="@+id/itemQuantityEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/hint_quantity"
+            android:inputType="number"
+            android:text="1"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
 
-            <EditText
-                android:id="@+id/itemPriceEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/hint_price"
-                android:text="1"
-                android:inputType="number"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Price" />
+
+        <EditText
+            android:id="@+id/itemPriceEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/hint_price"
+            android:inputType="number"
+            android:text="1"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
 
 </LinearLayout>

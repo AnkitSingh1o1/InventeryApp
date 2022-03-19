@@ -100,9 +100,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 //Delete all pets
                 deleteAllPets();
                 return true;
+            case R.id.action_contact_dealer:
+                contactDealer();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void contactDealer() {
+        String to = "ankitsinghniti@gmail.com";
+        String subject = "Order more items/Contact App Developer";
+        String message = "Respected Sir,\n";
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, message);
+        //need this to prompts email client only
+        email.setType("message/rfc822");
+
+        startActivity(Intent.createChooser(email, "Choose an Email client :"));
+    }
+
     /**
      * Helper method to delete all pets in the database.
      */

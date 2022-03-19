@@ -19,4 +19,9 @@
     <string name="unsaved_changes_dialog_msg">Unsaved Changes</string>
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
+    <string name="delete_dialog_msg">Do you want to Delete?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="editor_delete_pet_failed">Deletion Failed</string>
+    <string name="editor_delete_pet_successful">Deleted</string>
 </resources>

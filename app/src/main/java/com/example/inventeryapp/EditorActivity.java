@@ -12,6 +12,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -150,6 +151,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 savePet();
+                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -267,6 +269,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String name = mNameEditText.getText().toString();
         int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
         int price = Integer.parseInt(mPriceEditText.getText().toString());
+
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();

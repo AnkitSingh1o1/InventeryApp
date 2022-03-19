@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.text.TextUtils;
+
 
 import com.example.inventeryapp.data.DBContract.DBEntry;
 
@@ -38,9 +40,15 @@ public class InventoryCursorAdapter extends CursorAdapter {
         int itemQuantity = cursor.getInt(quantityColumnIndex);
         int itemPrice = cursor.getInt(priceColumnIndex);
 
+        // If the pet breed is empty string or null, then use some default text
+        // that says "Unknown breed", so the TextView isn't blank.
+        if (TextUtils.isEmpty(itemName)) {
+            itemName = context.getString(R.string.unknown_breed);
+        }
+
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(itemName);
-        quantityTextView.setText(itemQuantity + "\nQuantity");
+        quantityTextView.setText("Quantity: "+itemQuantity);
         priceTextView.setText("Rs."+itemPrice+"/item");
     }
 }

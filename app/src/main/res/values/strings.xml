@@ -24,4 +24,5 @@
     <string name="cancel">Cancel</string>
     <string name="editor_delete_pet_failed">Deletion Failed</string>
     <string name="editor_delete_pet_successful">Deleted</string>
+    <string name="unknown_breed">Unknown</string>
 </resources>

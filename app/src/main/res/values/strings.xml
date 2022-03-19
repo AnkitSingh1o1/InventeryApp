@@ -16,4 +16,7 @@
     <string name="hint_quantity">Quantity</string>
     <string name="hint_price">Price</string>
     <string name="hint_name">Name</string>
+    <string name="unsaved_changes_dialog_msg">Unsaved Changes</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
 </resources>
